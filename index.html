@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>三宝佛光寺 · 供品准备打印系统</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500&display=swap');
+:root{--gold:#C9952A;--gold-light:#F0C860;--gold-pale:#FDF6E3;--burgundy:#6B1E2A;--burgundy-light:#922B3A;--ink:#1A1008;--smoke:#F5F0E8;--border:#E8D8B0;--lotus:#C94080;--lotus-light:#FFE8F2;--guang:#1E6B4A;--guang-light:#E8F5EE}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans SC',sans-serif;background:var(--smoke);color:var(--ink);min-height:100vh}
+header{background:linear-gradient(135deg,var(--burgundy) 0%,#3D0F18 100%);padding:28px 40px;display:flex;align-items:center;gap:20px;position:relative;overflow:hidden}
+header::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 20px,rgba(201,149,42,.05) 20px,rgba(201,149,42,.05) 40px)}
+.hi{font-size:44px;position:relative;z-index:1}
+.ht{position:relative;z-index:1}
+.ht h1{font-family:'Noto Serif SC',serif;font-size:22px;color:var(--gold-light);letter-spacing:2px}
+.ht p{font-size:12px;color:rgba(255,255,255,.45);margin-top:4px;letter-spacing:1px}
+.container{max-width:960px;margin:0 auto;padding:32px 24px}
+.card{background:white;border-radius:14px;border:1px solid var(--border);margin-bottom:20px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.04)}
+.card-header{background:var(--gold-pale);border-bottom:1px solid var(--border);padding:14px 22px;display:flex;align-items:center;gap:10px}
+.sn{background:var(--gold);color:white;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.card-header h2{font-size:14px;font-weight:600;color:var(--burgundy);letter-spacing:.5px}
+.card-body{padding:22px}
+.date-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.date-row label{font-size:13px;font-weight:500;color:var(--burgundy);white-space:nowrap}
+input[type=date]{border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:14px;font-family:inherit;color:var(--ink);background:white;cursor:pointer}
+input[type=date]:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,149,42,.15)}
+.btn-primary{background:var(--burgundy);color:white;border:none;border-radius:8px;padding:10px 22px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;letter-spacing:.5px;transition:background .2s}
+.btn-primary:hover{background:var(--burgundy-light)}
+.status-bar{border-radius:8px;padding:10px 16px;font-size:12px;margin-bottom:14px;background:var(--gold-pale);border:1px solid var(--border);color:#999}
+.status-bar.ok{background:var(--guang-light);border-color:#7AC8A0;color:#155234}
+.status-bar.warn{background:#FFF5E0;border-color:#F5BE40;color:#7A5A00}
+.results-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px}
+.results-meta h3{font-size:14px;font-weight:600}
+.badges{display:flex;gap:8px}
+.badge{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px}
+.badge-lotus{background:var(--lotus-light);color:var(--lotus)}
+.badge-guang{background:var(--guang-light);color:var(--guang)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:#F8F4ED;padding:10px 14px;text-align:left;font-weight:600;font-size:11px;color:#777;border-bottom:1px solid var(--border);letter-spacing:.5px}
+td{padding:10px 14px;border-bottom:1px solid #F0EBE0;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#FFFCF5}
+.type-tag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 10px;border-radius:12px}
+.type-tag.lotus{background:var(--lotus-light);color:var(--lotus)}
+.type-tag.guang{background:var(--guang-light);color:var(--guang)}
+.name-cell{font-family:'Noto Serif SC',serif;font-weight:600;font-size:14px}
+.empty-state{text-align:center;padding:44px;color:#BBB}
+.empty-state .icon{font-size:40px;margin-bottom:12px}
+.empty-state p{font-size:14px}
+.print-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.print-card{border-radius:12px;border:1.5px solid;padding:22px;text-align:center}
+.print-card.lotus{border-color:#EAA0C0;background:linear-gradient(140deg,#fff 50%,var(--lotus-light))}
+.print-card.guang{border-color:#80C4A0;background:linear-gradient(140deg,#fff 50%,var(--guang-light))}
+.print-icon{font-size:38px;margin-bottom:12px}
+.print-title{font-size:17px;font-weight:700;font-family:'Noto Serif SC',serif;margin-bottom:6px}
+.print-title.lotus{color:var(--lotus)}
+.print-title.guang{color:var(--guang)}
+.print-spec{font-size:11px;color:#999;line-height:1.8}
+.print-count{font-size:13px;font-weight:600;margin-top:10px}
+.print-count.lotus{color:var(--lotus)}
+.print-count.guang{color:var(--guang)}
+.print-btn{margin-top:14px;padding:10px 0;width:100%;border:none;border-radius:8px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;letter-spacing:.5px;transition:all .2s}
+.print-btn.lotus{background:var(--lotus);color:white}
+.print-btn.lotus:hover{background:#A83060}
+.print-btn.guang{background:var(--guang);color:white}
+.print-btn.guang:hover{background:#154D36}
+.print-btn:disabled{opacity:.35;cursor:not-allowed}
+.toast{position:fixed;bottom:24px;right:24px;background:#1A1008;color:white;padding:12px 20px;border-radius:8px;font-size:13px;font-weight:500;z-index:9999;opacity:0;transform:translateY(8px);transition:all .3s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+#loadBanner{margin-bottom:16px;padding:12px 16px;background:var(--gold-pale);border:1px solid var(--border);border-radius:10px;font-size:13px;color:#8A6000;text-align:center}
+#availDates{display:none;margin-bottom:16px;padding:12px 16px;background:#E8F5EE;border:1px solid #7AC8A0;border-radius:10px;font-size:12px;color:#155234;line-height:2.4}
+</style>
+</head>
+<body>
+<header>
+  <div class="hi">🏯</div>
+  <div class="ht">
+    <h1>三宝佛光寺 · 供品准备打印系统</h1>
+    <p>Lord Buddha Temple Singapore · Offering Preparation &amp; Print System</p>
+  </div>
+</header>
+<div class="container">
+
+<div id="loadBanner">⏳ 正在连接数据源...</div>
+<div id="availDates"></div>
+
+<!-- STEP 1 -->
+<div class="card">
+  <div class="card-header"><div class="sn">1</div><h2>选择日期 Select Date</h2></div>
+  <div class="card-body">
+    <div class="date-row">
+      <label>准备供品日期：</label>
+      <input type="date" id="dateInput">
+      <button class="btn-primary" onclick="filterByDate()">🔍 载入 Load</button>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 2 -->
+<div class="card">
+  <div class="card-header"><div class="sn">2</div><h2>供品清单 Offerings List</h2></div>
+  <div class="card-body">
+    <div id="statusBar" class="status-bar">请选择日期后载入</div>
+    <div id="resultsArea">
+      <div class="empty-state"><div class="icon">🪷</div><p>供品清单将显示在此处</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 3 -->
+<div class="card">
+  <div class="card-header"><div class="sn">3</div><h2>打印标签 Print Labels</h2></div>
+  <div class="card-body">
+    <div class="print-grid">
+      <div class="print-card lotus">
+        <div class="print-icon">🪷</div>
+        <div class="print-title lotus">莲花烛 标签</div>
+        <div class="print-spec">HERMA No.4270 · 38.1×21.2mm<br>每页65个（5列×13行）<br>① 祈福名称 ② 备注栏 ③ 日期 ④ 佛祖</div>
+        <div class="print-count lotus" id="lotusCount">–</div>
+        <button class="print-btn lotus" id="btnLotus" onclick="printLotus()" disabled>🖨️ 打印莲花烛标签</button>
+      </div>
+      <div class="print-card guang">
+        <div class="print-icon">🕯️</div>
+        <div class="print-title guang">光明烛 标签</div>
+        <div class="print-spec">A4纸，每页3个矩形<br>每格8.12×19.5cm<br>祈福名称·喜敬/合家喜敬</div>
+        <div class="print-count guang" id="guangCount">–</div>
+        <button class="print-btn guang" id="btnGuang" onclick="printGuang()" disabled>🖨️ 打印光明烛标签</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+var allRows = [];
+var filtered = [];
+
+// ── INIT ──────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
+  var t = new Date();
+  document.getElementById('dateInput').value = fmtISO(t);
+  autoLoad();
+});
+
+function fmtISO(d) {
+  return d.getFullYear() + '-'
+    + String(d.getMonth()+1).padStart(2,'0') + '-'
+    + String(d.getDate()).padStart(2,'0');
+}
+
+function fmtDisplay(isoDate) {
+  var p = isoDate.split('-');
+  return p[2] + '/' + p[1] + '/' + p[0].slice(2);
+}
+
+// ── SHEETDB AUTO-LOAD ─────────────────────────────────
+function autoLoad() {
+  var apiUrl = 'https://sheetdb.io/api/v1/ayutqp5asrwb3?limit=999999';
+  var banner = document.getElementById('loadBanner');
+
+  fetch(apiUrl)
+    .then(function(r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(function(rows) {
+      if (!rows || !rows.length) throw new Error('Google Sheet 没有数据');
+
+      var keys = Object.keys(rows[0]).map(function(k){ return k.trim(); });
+      var req = ['准备供品日期','祈福名称','备注栏','供品名称','佛祖名称'];
+      var miss = req.filter(function(col){ return !keys.includes(col); });
+      if (miss.length) {
+        throw new Error('缺少栏位：' + miss.join('、') + '  （实际：' + keys.join('、') + '）');
+      }
+
+      allRows = rows.map(function(r) {
+        var remark = String(r['备注栏'] || '').trim();
+        if (remark === '无' || remark === '-') remark = '';
+        return {
+          date:     normDate(String(r['准备供品日期'] || '').trim()),
+          name:     String(r['祈福名称'] || '').trim(),
+          remark:   remark,
+          offering: String(r['供品名称'] || '').trim(),
+          deity:    String(r['佛祖名称'] || '').trim(),
+          type:     detectType(String(r['供品名称'] || ''))
+        };
+      }).filter(function(r){ return r.name && r.date; });
+
+      // Build date buttons
+      var dates = [];
+      allRows.forEach(function(r){ if (dates.indexOf(r.date) === -1) dates.push(r.date); });
+      dates.sort();
+
+      var html = '<strong>选择日期：</strong> ';
+      dates.forEach(function(d) {
+        html += '<button onclick="pickDate(\'' + d + '\')" '
+          + 'style="background:#1E6B4A;color:white;border:none;border-radius:5px;'
+          + 'padding:5px 14px;font-size:12px;cursor:pointer;font-family:inherit;margin:2px 4px 2px 0">'
+          + fmtDisplay(d) + '</button>';
+      });
+
+      var av = document.getElementById('availDates');
+      av.innerHTML = html;
+      av.style.display = 'block';
+      banner.style.display = 'none';
+      showToast('✅ 已载入 ' + allRows.length + ' 条记录');
+    })
+    .catch(function(err) {
+      banner.style.background = '#FFF0F0';
+      banner.style.borderColor = '#FFAAAA';
+      banner.style.color = '#AA0000';
+      var isLocal = location.protocol === 'file:';
+      if(isLocal){
+        banner.innerHTML = '❌ 本地文件无法连接网络数据源 &nbsp;|&nbsp; '
+          + '请将此文件拖入 <a href="https://app.netlify.com/drop" target="_blank" '
+          + 'style="color:#AA0000;font-weight:700;text-decoration:underline">Netlify Drop</a> '
+          + '部署后，用网址访问即可正常使用 &nbsp;'
+          + '<button onclick="autoLoad()" style="background:#AA0000;color:white;border:none;border-radius:4px;padding:4px 10px;font-size:12px;cursor:pointer">重试</button>';
+      } else {
+        banner.innerHTML = '❌ ' + err.message
+          + ' &nbsp;<button onclick="autoLoad()" style="background:#AA0000;color:white;border:none;border-radius:4px;padding:4px 10px;font-size:12px;cursor:pointer">重试</button>';
+      }
+    });
+}
+
+function pickDate(isoDate) {
+  document.getElementById('dateInput').value = isoDate;
+  filterByDate();
+}
+
+// ── DATE PARSING ──────────────────────────────────────
+function normDate(val) {
+  if (!val) return '';
+  if (val instanceof Date) {
+    if (isNaN(val.getTime())) return '';
+    return val.getFullYear() + '-'
+      + String(val.getMonth()+1).padStart(2,'0') + '-'
+      + String(val.getDate()).padStart(2,'0');
+  }
+  val = String(val).trim();
+  if (!val) return '';
+  var m;
+  // YYYY-MM-DD
+  m = val.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if (m) return m[1] + '-' + m[2].padStart(2,'0') + '-' + m[3].padStart(2,'0');
+  // D1/D2/YY or D1/D2/YYYY — smart DD/MM vs MM/DD
+  m = val.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+  if (m) {
+    var d1=parseInt(m[1]), d2=parseInt(m[2]);
+    var yr = m[3].length===2 ? '20'+m[3] : m[3];
+    var day, mon;
+    if (d1>12)      { day=d1; mon=d2; }
+    else if (d2>12) { day=d2; mon=d1; }
+    else            { day=d1; mon=d2; }
+    return yr + '-' + String(mon).padStart(2,'0') + '-' + String(day).padStart(2,'0');
+  }
+  // D1-D2-YY or D1-D2-YYYY
+  m = val.match(/^(\d{1,2})-(\d{1,2})-(\d{2,4})$/);
+  if (m) {
+    var d1=parseInt(m[1]), d2=parseInt(m[2]);
+    var yr = m[3].length===2 ? '20'+m[3] : m[3];
+    var day, mon;
+    if (d1>12)      { day=d1; mon=d2; }
+    else if (d2>12) { day=d2; mon=d1; }
+    else            { day=d1; mon=d2; }
+    return yr + '-' + String(mon).padStart(2,'0') + '-' + String(day).padStart(2,'0');
+  }
+  return '';
+}
+
+// ── DETECT TYPE ───────────────────────────────────────
+function detectType(s) {
+  s = s.toLowerCase();
+  if (s.includes('莲花烛') || s.includes('lotus')) return 'lotus';
+  if (s.includes('光明烛') || s.includes('blessing')) return 'guang';
+  return 'guang';
+}
+
+// ── FILTER & RENDER ───────────────────────────────────
+function filterByDate() {
+  var ds = document.getElementById('dateInput').value;
+  if (!ds) { showToast('请选择日期'); return; }
+  if (!allRows.length) { showToast('数据尚未载入，请稍候'); return; }
+  filtered = allRows.filter(function(r){ return r.date === ds; });
+  renderResults(ds);
+}
+
+function renderResults(ds) {
+  var lotus = filtered.filter(function(r){ return r.type==='lotus'; });
+  var guang  = filtered.filter(function(r){ return r.type==='guang'; });
+  document.getElementById('lotusCount').textContent = '共 '+lotus.length+' 个莲花烛标签';
+  document.getElementById('guangCount').textContent = '共 '+guang.length+' 个光明烛标签';
+  document.getElementById('btnLotus').disabled = lotus.length===0;
+  document.getElementById('btnGuang').disabled = guang.length===0;
+  var dd = fmtDisplay(ds);
+  if (!filtered.length) {
+    setStatus('warn','⚠️ '+dd+' 没有供品记录');
+    document.getElementById('resultsArea').innerHTML =
+      '<div class="empty-state"><div class="icon">🔍</div><p>此日期没有找到供品记录</p></div>';
+    return;
+  }
+  setStatus('ok','✅ '+dd+' · 共 '+filtered.length+' 个供品（莲花烛 '+lotus.length+' / 光明烛 '+guang.length+'）');
+  var rows = filtered.map(function(r,i){
+    return '<tr>'
+      +'<td style="color:#BBB;font-size:12px">'+(i+1)+'</td>'
+      +'<td class="name-cell">'+esc(r.name)+'</td>'
+      +'<td style="color:#777;font-size:12px">'+esc(r.remark)+'</td>'
+      +'<td><span class="type-tag '+r.type+'">'+(r.type==='lotus'?'🪷 莲花烛':'🕯️ 光明烛')+'</span></td>'
+      +'<td>'+esc(r.offering)+'</td>'
+      +'<td style="color:#555">'+esc(r.deity)+'</td>'
+      +'</tr>';
+  }).join('');
+  document.getElementById('resultsArea').innerHTML =
+    '<div class="results-meta">'
+    +'<h3>📋 '+dd+' 供品清单</h3>'
+    +'<div class="badges">'
+    +'<span class="badge badge-lotus">🪷 莲花烛 '+lotus.length+' 个</span>'
+    +'<span class="badge badge-guang">🕯️ 光明烛 '+guang.length+' 个</span>'
+    +'</div></div>'
+    +'<table><thead><tr>'
+    +'<th>#</th><th>祈福名称</th><th>备注栏</th><th>供品类型</th><th>供品名称</th><th>佛祖名称</th>'
+    +'</tr></thead><tbody>'+rows+'</tbody></table>';
+}
+
+function setStatus(type,msg){
+  var b=document.getElementById('statusBar');
+  b.className='status-bar '+type;
+  b.textContent=msg;
+}
+
+// ── PRINT: 莲花烛 HERMA 4270 ──────────────────────────
+function printLotus(){
+  var lotus=filtered.filter(function(r){return r.type==='lotus';});
+  if(!lotus.length)return;
+  var ds=document.getElementById('dateInput').value;
+  var dd=fmtDisplay(ds);
+  var PER=65;
+  var labels=lotus.map(function(r){return{name:r.name,remark:r.remark,deity:r.deity};});
+
+  var pages='';
+  for(var p=0;p<Math.ceil(labels.length/PER);p++){
+    var s=labels.slice(p*PER,(p+1)*PER);
+    while(s.length<PER)s.push({name:'',remark:'',deity:''});
+    var cells='';
+    for(var i=0;i<65;i++){
+      var col=i%5, row=Math.floor(i/5);
+      var left=(9.7+col*38.1).toFixed(2);
+      var top=(10.7+row*21.2).toFixed(2);
+      var lb=s[i];
+      cells+='<div class="lbl" data-orig-top="'+top+'" data-orig-left="'+left+'" style="left:'+left+'mm;top:'+top+'mm">'
+        +(lb.name
+          ?'<div class="lbl-n">'+esc(lb.name)+'</div>'
+           +'<div class="lbl-r">'+esc(lb.remark)+'</div>'
+           +'<div class="lbl-dt">'+dd+'</div>'
+           +'<div class="lbl-d">'+esc(lb.deity)+'</div>'
+          :'')
+        +'</div>';
+    }
+    pages+='<div class="pg">'+cells+'</div>';
+  }
+
+  var win=window.open('','_blank');
+  win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>莲花烛 '+dd+'</title>'
+    +'<style>'
+    +'@import url(\'https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700&family=Noto+Sans+SC:wght@400&display=swap\');'
+    +'*{margin:0;padding:0;box-sizing:border-box}'
+    +'body{background:#f0f0f0;font-family:\'Noto Sans SC\',sans-serif}'
+    +'.bar{background:#C94080;color:white;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}'
+    +'.bar span{font-size:13px;font-weight:700}'
+    +'.ctrl{display:flex;gap:10px;align-items:center;padding:8px 20px;background:white;border-bottom:1px solid #EEE;flex-wrap:wrap}'
+    +'.ctrl label{font-size:12px;color:#C94080;font-weight:600}'
+    +'.ctrl input[type=number]{width:65px;border:1px solid #DDA0C0;border-radius:5px;padding:4px 6px;font-size:12px;text-align:center}'
+    +'.btn-a{background:#C94080;color:white;border:none;border-radius:5px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer}'
+    +'.btn-b{background:#888;color:white;border:none;border-radius:5px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer}'
+    +'.btn-p{background:#1E6B4A;color:white;border:none;border-radius:6px;padding:8px 20px;font-size:13px;font-weight:700;cursor:pointer}'
+    +'.btn-t{background:#8B6914;color:white;border:none;border-radius:6px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer}'
+    +'.pg{position:relative;width:210mm;height:297mm;background:white;margin:16px auto;box-shadow:0 2px 16px rgba(0,0,0,.15)}'
+    +'.lbl{position:absolute;width:38.1mm;height:21.2mm;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:.8mm 1.5mm;overflow:hidden}'
+    +'.lbl-n{font-family:\'Noto Serif SC\',serif;font-weight:700;font-size:7pt;text-align:center;line-height:1.2;word-break:break-all;color:#1A0808;white-space:nowrap;overflow:hidden;max-width:100%}'
+    +'.lbl-r{font-size:5.5pt;color:#333;text-align:center;line-height:1.2;white-space:nowrap;overflow:hidden;max-width:100%}'
+    +'.lbl-dt{font-size:5pt;color:#777;text-align:center;line-height:1.2}'
+    +'.lbl-d{font-size:5pt;color:#AA6020;text-align:center;line-height:1.2}'
+    +'.test-mode .lbl{border:.4px dashed #DDA0C0}'
+    +'@media print{.bar,.ctrl{display:none}body{background:white}.pg{margin:0;box-shadow:none;page-break-after:always}@page{size:A4 portrait;margin:0}}'
+    +'</style></head><body>'
+    +'<div class="bar"><span>🪷 莲花烛标签 · '+dd+' · 共 '+labels.length+' 个 · HERMA 4270</span>'
+    +'<div style="display:flex;gap:8px"><button class="btn-t" onclick="toggleTest()">🔲 显示标签框</button>'
+    +'<button class="btn-p" onclick="window.print()">🖨️ 打印</button></div></div>'
+    +'<div class="ctrl">'
+    +'<label>🔤 字体调整：</label>'
+    +'<button class="btn-a" onclick="changeFontSize(-0.5)">－</button>'
+    +'<span id="fsDisp" style="font-size:13px;font-weight:700;color:#C94080;min-width:36px;text-align:center">默认</span>'
+    +'<button class="btn-a" onclick="changeFontSize(0.5)">＋</button>'
+    +'<button class="btn-b" onclick="resetFont()">重置</button>'
+    +'<span style="color:#CCC;margin:0 6px">｜</span>'
+    +'<label>⬆️ 上下偏移(mm)：</label>'
+    +'<input type="number" id="offTop" value="0" step="0.5" min="-10" max="10" style="width:58px;border:1px solid #DDA0C0;border-radius:5px;padding:4px 6px;font-size:12px;text-align:center">'
+    +'<label>⬅️ 左右偏移(mm)：</label>'
+    +'<input type="number" id="offLeft" value="0" step="0.5" min="-10" max="10" style="width:58px;border:1px solid #DDA0C0;border-radius:5px;padding:4px 6px;font-size:12px;text-align:center">'
+    +'<button class="btn-a" onclick="applyOffset()">套用</button>'
+    +'</div>'
+    +'<div id="pageContainer">'+pages+'</div>'
+    +'<script>'
+    +'var fsOff=0;'
+    +'var defSz={"lbl-n":7,"lbl-r":5.5,"lbl-dt":5,"lbl-d":5};'
+    +'function changeFontSize(d){fsOff=Math.round((fsOff+d)*10)/10;applyFont();}'
+    +'function resetFont(){fsOff=0;applyFont();}'
+    +'function applyFont(){'
+    +'  document.getElementById("fsDisp").textContent=fsOff===0?"默认":(fsOff>0?"+":"")+fsOff+"pt";'
+    +'  Object.keys(defSz).forEach(function(cls){'
+    +'    var sz=Math.max(3,defSz[cls]+fsOff);'
+    +'    document.querySelectorAll("."+cls).forEach(function(el){el.style.fontSize=sz+"pt";});'
+    +'  });'
+    +'}'
+    
+    +'function applyOffset(){'
+    +'  var ot=parseFloat(document.getElementById("offTop").value)||0;'
+    +'  var ol=parseFloat(document.getElementById("offLeft").value)||0;'
+    +'  document.querySelectorAll(".lbl").forEach(function(el){'
+    +'    el.style.top=(parseFloat(el.dataset.origTop)+ot)+"mm";'
+    +'    el.style.left=(parseFloat(el.dataset.origLeft)+ol)+"mm";'
+    +'  });'
+    +'}'
+    +'function toggleTest(){'
+    +'  document.getElementById("pageContainer").classList.toggle("test-mode");'
+    +'}'
+    +'<\/script>'
+    +'</body></html>');
+  win.document.close();
+}
+
+// ── PRINT: 光明烛 A4 ──────────────────────────────────
+function splitGuangName(name){
+  var kws=[{kw:'合家',sub:'合家喜敬'},{kw:'阖家',sub:'阖家喜敬'}];
+  for(var i=0;i<kws.length;i++){
+    var idx=name.indexOf(kws[i].kw);
+    if(idx!==-1)return{main:name.slice(0,idx).trim(),sub:kws[i].sub};
+  }
+  return{main:name,sub:'喜敬'};
+}
+
+function guangFontSize(name){
+  var isEng=/^[A-Za-z\s\-'.]+$/.test(name.trim());
+  if(isEng) return '42pt';
+  return name.length<=3?'100pt':'60pt';
+}
+
+function printGuang(){
+  var guang=filtered.filter(function(r){return r.type==='guang';});
+  if(!guang.length)return;
+  var ds=document.getElementById('dateInput').value;
+  var dd=fmtDisplay(ds);
+  var PER=3;
+  var pages='';
+  for(var p=0;p<Math.ceil(guang.length/PER);p++){
+    var s=guang.slice(p*PER,(p+1)*PER);
+    var boxes=s.map(function(r){
+      var sp=splitGuangName(r.name);
+      var fs=guangFontSize(sp.main);
+      return '<div class="box"><div class="bi">'
+        +'<div class="bn" style="font-size:'+fs+'">'+esc(sp.main)+'</div>'
+        +'<div class="bs">'+esc(sp.sub)+'</div>'
+        +'</div></div>';
+    }).join('');
+    pages+='<div class="page">'+boxes+'</div>';
+  }
+
+  var win=window.open('','_blank');
+  win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>光明烛 '+dd+'</title>'
+    +'<style>'
+    +'@import url(\'https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700&family=Noto+Sans+SC:wght@500&display=swap\');'
+    +'*{margin:0;padding:0;box-sizing:border-box}'
+    +'body{background:#f0f0f0;font-family:\'Noto Sans SC\',sans-serif}'
+    +'.bar{background:#AA0000;color:white;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}'
+    +'.bar span{font-size:13px;font-weight:700}'
+    +'.btn-p{background:#CC0000;color:white;border:none;border-radius:6px;padding:8px 20px;font-size:13px;font-weight:700;cursor:pointer}'
+    +'.page{width:210mm;height:297mm;background:white;margin:16px auto;display:flex;flex-direction:column;padding:12.7mm;gap:14mm;box-shadow:0 2px 16px rgba(0,0,0,.18)}'
+    +'.box{width:184.6mm;height:81.2mm;border:1.5px solid #888;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:white}'
+    +'.bi{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5mm;padding:6mm 10mm;width:100%}'
+    +'.bn{font-family:\'Noto Serif SC\',serif;font-weight:700;color:#CC0000;text-align:center;letter-spacing:5px;line-height:1.1;word-break:break-all}'
+    +'.bs{font-family:\'Noto Serif SC\',serif;font-size:45pt;font-weight:700;color:#CC0000;text-align:center;letter-spacing:4px}'
+    +'@media print{.bar{display:none}body{background:white}.page{margin:0;box-shadow:none;page-break-after:always}@page{size:A4 portrait;margin:0}}'
+    +'</style></head><body>'
+    +'<div class="bar">'
+    +'<span>🕯️ 光明烛标签 · '+dd+' · 共 '+guang.length+' 个 · A4（每页3格）</span>'
+    +'<button class="btn-p" onclick="window.print()">🖨️ 打印</button>'
+    +'</div>'
+    +pages+'</body></html>');
+  win.document.close();
+}
+
+// ── UTILS ────────────────────────────────────────────
+function esc(s){
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function showToast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show');},3000);
+}
+</script>
+</body>
+</html>
