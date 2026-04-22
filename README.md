@@ -102,4 +102,5 @@ DD-MM-YYYY	19-04-2026	也支持
 •	数据源：SheetDB API（连接 Google Sheet）
 •	字体：Noto Serif SC / Noto Sans SC（Google Fonts）
 •	兼容浏览器：Chrome（推荐）、Edge、Safari
-
+https://sheetdb.io/api/v1/ayutqp5asrwb3
+https://docs.google.com/spreadsheets/d/1Ar27XeIOvYDbMa5GMf1v63ODdjIZ04xlW7i00ZRd-qc/edit?gid=0#gid=0
